@@ -1,0 +1,85 @@
+//==========================================================================================
+// Themes
+// Main colour themes used throughout the blocks of the website
+//==========================================================================================
+* {
+  color: var(--text-color, #{$black});
+  fill: var(--fill-color, #{$black});
+}
+
+.theme {
+  background: var(--bg-color, #{$white});
+}
+
+$colour-themes: (
+  "1": (
+    $color-1,
+    $white
+  ),
+  "2": (
+    $color-2,
+    $white
+  ),
+  "3": (
+    $color-3,
+    $white
+  ),
+  "4": (
+    $black,
+    $white
+  ),
+  "5": (
+    $black,
+    $color-3
+  )
+);
+
+// LOOP EACH -
+@each $theme-name, $theme-colors in $colour-themes {
+  // Set some local variables for clarity -
+  // Background color
+  $themeBG: #{nth($theme-colors, 1)};
+  $themeText: #{nth($theme-colors, 2)};
+
+  // Generate theme rules
+  .theme--#{$theme-name} {
+    // Set base theme properties
+    --bg-color: #{$themeBG};
+    --text-color: #{$themeText};
+    --fill-color: #{$themeText};
+
+    // Importants
+    .background--theme {
+      --bg-color: #{$themeBG};
+    }
+
+    .typo--theme {
+      --text-color: #{$themeBG};
+    }
+
+    .svg--theme {
+      --fill-color: #{$themeText};
+    }
+  }
+
+  // Generate theme rules (Reverse)
+  .theme--#{$theme-name}-reverse {
+    // Set base theme properties
+    --bg-color: #{$themeText};
+    --text-color: #{$themeBG};
+    --fill-color: #{$themeBG};
+
+    // Importants
+    .background--theme {
+      --bg-color: #{$themeText};
+    }
+
+    .typo--theme {
+      --text-color: #{$themeBG};
+    }
+
+    .svg--theme {
+      --fill-color: #{$themeBG};
+    }
+  }
+}

@@ -1,0 +1,21 @@
+//========================================================
+// Screen
+//========================================================
+.screen {
+}
+
+.screen__equation {
+  border: none;
+  width: 100%;
+  display: flex;
+  font-size: 3.5rem;
+  line-height: 1;
+  padding: 0.5em;
+  padding-top: 0.7em;
+  text-align: right;
+  background: none;
+  font-weight: bold;
+  &:focus {
+    outline: none;
+  }
+}

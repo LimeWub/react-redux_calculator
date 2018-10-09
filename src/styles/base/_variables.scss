@@ -1,0 +1,41 @@
+/* ---------------------------------------------------------------------------------*/
+/*  SCSS VARIABLES
+/* ---------------------------------------------------------------------------------*/
+
+/* -----------------------------*/
+/* Colours */
+/* -----------------------------*/
+
+/* Primary */
+$color-1: #e08dac;
+$color-2: #7353ba;
+$color-3: #45cb85;
+$white: #f0eff4;
+$black: #0f1020;
+
+/* -----------------------------*/
+/* TEXT */
+/* -----------------------------*/
+@import url("https://fonts.googleapis.com/css?family=Open+Sans|Sansita|Orbitron");
+$font-stack: "Open Sans", sans-serif;
+$font-stack-heading: "Sansita", sans-serif;
+$font-numerics: "Orbitron", sans-serif;
+$text-color: $black;
+
+/* ---------------------------------------------------------------------------------*/
+/* DIMENSIONS / SPACING
+/* ---------------------------------------------------------------------------------*/
+/* BREAKPOINTS */
+$xs: 480px; // mobile
+$sm: 768px; // tablet
+$md: 992px; // small desktop
+$lg: 1200px; // desktop
+$mx: 1681px; // large desktop
+
+/* SPACING */
+$container-max-width: 1920px;
+
+$vertical-spacing: 8vh;
+$horizontal-spacing: 5vw;
+$column-spacing: 10px;
+$internal-vertical-spacing: 2rem;

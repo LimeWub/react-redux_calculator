@@ -1,0 +1,200 @@
+/* --------------------------------------------------------------------------------------------*/
+/* GENERAL TYPOGRAPHY */
+/* --------------------------------------------------------------------------------------------*/
+
+html {
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: $font-stack;
+
+  @include breakpoint(md) {
+    font-size: 16px;
+  }
+  @include breakpoint(lg) {
+    font-size: 17px;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 0 0.7em 0;
+  font-family: $font-stack-heading;
+  word-wrap: break-word;
+  font-weight: bold;
+}
+
+h1,
+.h1 {
+  font-size: 3.3rem;
+  line-height: 1;
+}
+
+h2,
+.h2 {
+  font-size: 2.5rem;
+  line-height: 1.1;
+}
+h3,
+.h3 {
+  font-size: 1.8rem;
+  line-height: 1.1;
+}
+
+h4,
+.h4 {
+  margin-bottom: 1.6rem;
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+
+h5,
+.h5 {
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  line-height: 1.25;
+}
+
+h6,
+.h6 {
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  font-size: 1rem;
+}
+
+p,
+.p {
+  margin: 0 0 1.5rem 0;
+  font-size: 1rem;
+}
+
+li,
+.li,
+label {
+  margin: 0 0 0.8rem 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+/*
+.text-muted		 {opacity: 0.6;}
+.text-primary	 {color: $state-color-primary;}
+.text-success	 {color: $state-color-success;}
+.text-info		 {color: $state-color-info;}
+.text-warning	 {color: $state-color-warning;}
+.text-danger	 {color: $state-color-danger;}
+*/
+
+a {
+  text-decoration: none;
+}
+
+strong,
+b {
+  font-weight: normal;
+}
+
+sub,
+sup {
+  font-size: 50%;
+}
+
+sup {
+  top: -1rem;
+}
+
+blockquote,
+.blockquote {
+  position: relative;
+  margin: 0 0 0 3rem;
+  font-size: 1.1rem;
+  line-height: 1.4rem;
+  max-width: 350px;
+
+  &:before {
+    position: absolute;
+    display: block;
+    content: "\201C";
+    font-size: 3rem;
+    font-weight: bold;
+    line-height: 1.5rem;
+    margin-left: -2.5rem;
+    left: 0;
+    top: 0;
+  }
+}
+
+.blockquote__accredation {
+  margin-top: 1rem;
+  display: block;
+  font-size: 1rem;
+  line-height: 1rem;
+}
+
+.numeric {
+  font-family: $font-numerics;
+}
+
+/* -----------------------------*/
+/* TYPE */
+
+.date,
+.read {
+  font-weight: 500;
+}
+
+/* -----------------------------*/
+/* STYLE */
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.text-nocase {
+  text-transform: none;
+}
+
+/* -----------------------------*/
+/* SIZE */
+
+.text-small {
+  font-size: 0.75em;
+  line-height: 1em;
+  display: inline-block;
+}
+
+.text-tiny {
+  font-size: 0.5em;
+  line-height: 1em;
+  display: inline-block;
+}
+
+/* -----------------------------*/
+/* WEIGHT */
+
+.text-light {
+  font-weight: 300;
+}
+
+.text-regular {
+  font-weight: normal;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+/* -----------------------------*/
+/* SELECTION */
+::selection {
+  background: var(--text-color, #{$black});
+  color: var(--bg-color, #{$white});
+}

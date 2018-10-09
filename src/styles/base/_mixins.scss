@@ -1,0 +1,56 @@
+/* --------------------------------------------------------------------------------------------*/
+/*  SCSS MIXINS
+/* --------------------------------------------------------------------------------------------*/
+
+/* Responsive Detection */
+@mixin breakpoint($media) {
+  //---------------------------------------------------------
+  /* Max width media queries */
+
+  @if $media == xs-max {
+    @media only screen and (max-width: $xs - 1) {
+      @content;
+    }
+  } @else if $media == sm-max {
+    @media only screen and (max-width: $sm - 1) {
+      @content;
+    }
+  } @else if $media == md-max {
+    @media only screen and (max-width: $md - 1) {
+      @content;
+    }
+  } @else if $media == lg-max {
+    @media only screen and (max-width: $lg - 1) {
+      @content;
+    }
+  } @else if $media == mx-max {
+    @media only screen and (max-width: $mx - 1) {
+      @content;
+    }
+  }
+
+  //---------------------------------------------------------
+  /* Min width media queries */
+
+  @if $media == xs {
+    @media only screen and (min-width: $xs) {
+      @content;
+    }
+  } @else if $media == sm {
+    @media only screen and (min-width: $sm) {
+      @content;
+    }
+  } @else if $media == md {
+    @media only screen and (min-width: $md) {
+      @content;
+    }
+  } @else if $media == lg {
+    @media only screen and (min-width: $lg) {
+      @content;
+    }
+  } @else if $media == mx {
+    @media only screen and (min-width: $mx) {
+      @content;
+    }
+  }
+}
