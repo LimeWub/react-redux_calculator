@@ -62,21 +62,27 @@ export const ce = () => {
   };
 };
 
-export const appendTo = value => {
+export const appendTo = (value, type) => {
   return dispatch => {
     dispatch({
       type: types.equation.APPEND_CHUNK,
-      value: value
+      payload: {
+        value: value,
+        type: type
+      }
     });
   };
 };
 
-export const insertAt = (value, index) => {
+export const insertAt = (value, type, index) => {
   return dispatch => {
     dispatch({
       type: types.equation.INSERT_CHUNK,
-      value: value,
-      index: index
+      payload: {
+        value: value,
+        type: type,
+        index: index
+      }
     });
   };
 };
@@ -85,38 +91,6 @@ export const degreesSwitch = () => {
   return dispatch => {
     dispatch({
       type: types.equation.DEGREES_SWITCH
-    });
-  };
-};
-
-export const addPower = () => {
-  return dispatch => {
-    dispatch({
-      type: types.equation.ADD_POWER
-    });
-  };
-};
-
-export const removePower = () => {
-  return dispatch => {
-    dispatch({
-      type: types.equation.REMOVE_POWER
-    });
-  };
-};
-
-export const powerNestingIncrement = () => {
-  return dispatch => {
-    dispatch({
-      type: types.equation.NESTING_INCREMENT
-    });
-  };
-};
-
-export const powerNestingDecrement = () => {
-  return dispatch => {
-    dispatch({
-      type: types.equation.NESTING_DECREMENT
     });
   };
 };

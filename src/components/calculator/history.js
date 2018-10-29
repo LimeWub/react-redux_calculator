@@ -5,18 +5,21 @@ import { prettify } from "utils/equationUtils";
 import "styles/components/calculator/history.scss";
 class History extends React.Component {
   render() {
-    return (
-      <div className="history">
-        <span>{prettify(this.props.error)}</span> <br />
-        <span>{prettify(this.props.history)}</span>
-      </div>
-    );
+    let historyText;
+    if (this.props.error) {
+      historyText = `Error: ${this.props.error}`;
+    } else if (this.props.result) {
+      historyText = `Ans: ${this.props.result}`;
+    } else {
+      return null;
+    }
+    return <p className="history">{historyText}</p>;
   }
 }
 
 const mapStateToProps = state => {
   return {
-    history: state.equation.history,
+    result: state.equation.result,
     error: state.equation.error
   };
 };

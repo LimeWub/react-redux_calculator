@@ -7,7 +7,7 @@ const defaultState = {
 const calculatorReducer = (state = defaultState, action) => {
   switch (action.type) {
     case types.calculator.SWITCH:
-      return { ...state, on: action.on };
+      return { ...state, on: action.payload.on };
     default:
       return state;
   }

@@ -3,19 +3,12 @@ import types from "actions/types";
 const defaultState = {
   result: "", // Answer or prev Equation
   error: "",
-  history: "",
   chunks: [],
-  indexOrder: [], // actually used for CE, no popping.
-  unitsInDegrees: false,
-  powersNestingCount: []
+  chunks_parentId: undefined,
+  chunks_parentSlot: undefined,
+  unitsInDegrees: false // this should prolly be in the calculator (can I move it there???)
   /*
-  powersNestingCount: [
-    1,
-    2,
-    1 // This power has 1 parenthesis and is nested in above (On key character press decide whether -1 and depending add extra parenthesis and lower one -reducer-)
-    ]
-  */
-  /*
+  //do I need one to tell me which slot I'm editing too?
   chunks: [
     {
       id: 0,
@@ -30,113 +23,185 @@ const defaultState = {
     {
       id: 2,
       type: "scientific",
-      value: "syn"
+      value: "syn",
+      childrenSlotCount: 1
     },
     {
       id: 3,
       parentId: 2,
+      parentSlot: 1,
       type: "number",
       value: 1
     },
     {
       id: 4,
-      parentId: 2
+      parentId: 2,
+      parentSlot: 1,
       type: "number",
       value: 0
     },
     {
       id: 5,
       parentId: 2,
+      parentSlot: 1,
       type: "arithmetic",
       value: "+"
     },
     {
       id: 6,
-      parentId: 2
+      parentId: 2,
+      parentSlot: 1,
       type: "nest"
     },
     {
       id: 7,
-      parentId: 5
+      parentId: 5,
+      parentSlot: 1,
+      type: "number",
+      value: 1
+    },
+    {
+      id: 8,
+      parentId: undefined,
+      type: "scientific",
+      value: "pow",
+      childrenSlotCount: 2
+    },
+    {
+      id: 9,
+      parentId: 8,
+      parentSlot: 1,
+      type: "number",
+      value: 1
+    },
+    {
+      id: 10,
+      parentId: 8,
+      parentSlot: 2,
       type: "number",
       value: 1
     }
-  ],
-  nestId: 5
+  ]
   */
+};
+
+const defaultChunk = {
+  id: 0,
+  value: 0, //"POW",
+  parentId: undefined,
+  parentSlot: undefined,
+  childrenSlotCount: undefined
 };
 
 const equationReducer = (state = defaultState, action) => {
   switch (action.type) {
-    case types.equation.CE:
-      let index = state.indexOrder.splice(-1, 1)[0]; // Index to Purge
-      state.chunks.splice(index, 1); // Purge
-      let nextIndex = state.indexOrder.slice(-1, 1)[0]; // Get next last index
-      if (state.chunks.slice(nextIndex, 1)[0] === "Math.pow(") {
-        state.chunks.splice(nextIndex, 1);
-      }
+    case types.equation.ALL_CLEAR:
       return {
         ...state,
-        error: "",
-        chunks: [...state.chunks],
-        indexOrder: [...state.indexOrder]
-      };
-    case types.equation.AC:
-      return {
-        ...state,
-        history: `Ans: ${state.result}`,
-        chunks: [],
-        indexOrder: []
+        chunks: []
       };
     case types.equation.APPEND_CHUNK:
       return {
         ...state,
-        chunks: [...state.chunks, action.value],
-        indexOrder: [...state.indexOrder, state.indexOrder.length]
+        chunks: [
+          ...state.chunks,
+          {
+            ...defaultChunk,
+            ...action.payload,
+            id: state.chunks.length,
+            parentId: state.chunks_parentId,
+            parentSlot: state.chunks_parentSlot
+          }
+        ]
       };
-    case types.equation.INSERT_CHUNK:
-      state.chunks.splice(action.index, 0, action.value);
+    case types.equation.POP_CHUNK:
+      state.chunks.pop();
       return {
         ...state,
+        error: "",
         chunks: [...state.chunks],
-        indexOrder: [...state.indexOrder, action.index]
+        chunks_parentId: state.chunks.length
+          ? state.chunks[state.chunks.length - 1].parentId
+          : undefined,
+        chunks_parentSlot: state.chunks.length
+          ? state.chunks[state.chunks.length - 1].parentChunk
+          : undefined
       };
     case types.equation.DEGREES_SWITCH:
       return {
         ...state,
         unitsInDegrees: !state.unitsInDegrees
       };
-    case types.equation.ADD_POWER:
-      return { ...state, powersNestingCount: [...state.powersNestingCount, 0] };
-    case types.equation.REMOVE_POWER:
-      state.powersNestingCount.pop();
-      return { ...state, powersNestingCount: [...state.powersNestingCount] };
-    case types.equation.NESTING_INCREMENT:
-      let incNestingCount = state.powersNestingCount.pop() + 1;
+    case types.equation.NEST_CHUNK:
       return {
         ...state,
-        powersNestingCount: [...state.powersNestingCount, incNestingCount]
+        chunks_parentId: state.chunks[state.chunks.length - 1].id
       };
-    case types.equation.NESTING_DECREMENT:
-      let decNestingCount = state.powersNestingCount.pop() - 1;
+    case types.equation.HOIST_CHUNK:
       return {
         ...state,
-        powersNestingCount: [...state.powersNestingCount, decNestingCount]
+        chunks_parentId: state.chunks[state.chunks.length - 1].parentId
+      };
+    case types.equation.SLOT_JUMP_CHUNK:
+      return {
+        ...state,
+        chunks_parentSlot: slotJump(
+          "FORWARD",
+          state.chunks,
+          state.chunks[state.chunks.length - 1]
+        )
       };
     case types.equation.RESULT:
       return {
         ...state,
-        error: "",
-        history: `${action.history} = `,
-        result: action.result,
-        chunks: [action.result],
-        indexOrder: [0]
+        result: action.payload.result,
+        error: defaultState.error,
+        chunks: [
+          {
+            ...defaultChunk,
+            value: action.payload.result
+          }
+        ],
+        chunks_parentId: defaultState.parentId,
+        chunks_parentSlot: defaultState.parentSlot
       };
     case types.equation.ERROR:
-      return { ...state, result: action.error, error: action.error };
+      return {
+        ...state,
+        result: "",
+        error: action.payload.error
+      };
     default:
       return state;
   }
 };
+
+function slotJump(type = "FORWARD", chunks, chunk) {
+  if (!chunk.parentId) return undefined; //We are top level so no slots to jump to (???)
+
+  let parentChunk = chunks.filter(chunk => chunk.id === chunk.parentId)[0];
+  if (!parentChunk) return undefined; //Catch for an odd case
+
+  // Get last chunk slot (cast to int)
+  let currentChunkSlot = +chunk.parentSlot;
+  // Get last chunk parent avail slots (cast to int)
+  let availableParentChunkSlots = +parentChunk.childrenSlotCount;
+  switch (type) {
+    case "FORWARD":
+      if (availableParentChunkSlots - currentChunkSlot > 0)
+        return currentChunkSlot + 1;
+      break;
+    case "BACKWARD":
+      if (availableParentChunkSlots - currentChunkSlot - 1 > 0)
+        return currentChunkSlot - 1;
+      break;
+    default:
+      //Throw error??
+      return false;
+  }
+
+  // LOOOOOOP
+  return slotJump(type, chunks, parentChunk);
+}
 
 export default equationReducer;
