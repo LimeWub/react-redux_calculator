@@ -45,6 +45,7 @@ class Calculator extends React.Component {
   }
 
   handleKeyDown(e) {
+    // I am thinking. Button presses as refs (?)
     const keyboard = this.keyboard.current.getWrappedInstance();
     switch (e.key) {
       case "Backspace":

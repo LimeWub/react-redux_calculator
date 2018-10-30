@@ -62,27 +62,11 @@ export const ce = () => {
   };
 };
 
-export const appendTo = (value, type) => {
+export const appendTo = chunk => {
   return dispatch => {
     dispatch({
       type: types.equation.APPEND_CHUNK,
-      payload: {
-        value: value,
-        type: type
-      }
-    });
-  };
-};
-
-export const insertAt = (value, type, index) => {
-  return dispatch => {
-    dispatch({
-      type: types.equation.INSERT_CHUNK,
-      payload: {
-        value: value,
-        type: type,
-        index: index
-      }
+      payload: chunk
     });
   };
 };

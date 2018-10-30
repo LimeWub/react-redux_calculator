@@ -4,11 +4,11 @@ import "styles/components/calculator/key";
 export const Key = props => {
   return (
     <button
-      className="key default"
+      className={`key ${props.classModifiers}`}
       type={props.type ? props.type : "button"}
       onClick={props.onClick}
     >
-      {props.text}
+      {props.children}
     </button>
   );
 };

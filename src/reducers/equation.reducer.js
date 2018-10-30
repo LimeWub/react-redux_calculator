@@ -6,83 +6,7 @@ const defaultState = {
   chunks: [],
   chunks_parentId: undefined,
   chunks_parentSlot: undefined,
-  unitsInDegrees: false // this should prolly be in the calculator (can I move it there???)
-  /*
-  //do I need one to tell me which slot I'm editing too?
-  chunks: [
-    {
-      id: 0,
-      type: "number",
-      value: 1
-    },
-    {
-      id: 1,
-      type: "arithmetic",
-      value: "+"
-    },
-    {
-      id: 2,
-      type: "scientific",
-      value: "syn",
-      childrenSlotCount: 1
-    },
-    {
-      id: 3,
-      parentId: 2,
-      parentSlot: 1,
-      type: "number",
-      value: 1
-    },
-    {
-      id: 4,
-      parentId: 2,
-      parentSlot: 1,
-      type: "number",
-      value: 0
-    },
-    {
-      id: 5,
-      parentId: 2,
-      parentSlot: 1,
-      type: "arithmetic",
-      value: "+"
-    },
-    {
-      id: 6,
-      parentId: 2,
-      parentSlot: 1,
-      type: "nest"
-    },
-    {
-      id: 7,
-      parentId: 5,
-      parentSlot: 1,
-      type: "number",
-      value: 1
-    },
-    {
-      id: 8,
-      parentId: undefined,
-      type: "scientific",
-      value: "pow",
-      childrenSlotCount: 2
-    },
-    {
-      id: 9,
-      parentId: 8,
-      parentSlot: 1,
-      type: "number",
-      value: 1
-    },
-    {
-      id: 10,
-      parentId: 8,
-      parentSlot: 2,
-      type: "number",
-      value: 1
-    }
-  ]
-  */
+  unitsInDegrees: false
 };
 
 const defaultChunk = {
@@ -115,7 +39,11 @@ const equationReducer = (state = defaultState, action) => {
         ]
       };
     case types.equation.POP_CHUNK:
-      state.chunks.pop();
+      let chunk = state.chunks.pop(); // hmmmm Is this useful? Can I has backcatching powers?
+      for (let i = 0; i < state.chunks.length; i++) {
+        if (state.chunks[i].parentId === chunk.id)
+          state.chunks[i].parentId = undefined;
+      }
       return {
         ...state,
         error: "",
@@ -132,21 +60,21 @@ const equationReducer = (state = defaultState, action) => {
         ...state,
         unitsInDegrees: !state.unitsInDegrees
       };
-    case types.equation.NEST_CHUNK:
+    case types.equation.NEST_CHUNKS:
       return {
         ...state,
         chunks_parentId: state.chunks[state.chunks.length - 1].id
       };
-    case types.equation.HOIST_CHUNK:
+    case types.equation.HOIST_CHUNKS:
+      // This prolly doesn't do what I think it does.
       return {
         ...state,
         chunks_parentId: state.chunks[state.chunks.length - 1].parentId
       };
-    case types.equation.SLOT_JUMP_CHUNK:
+    case types.equation.SLOT_CHUNKS:
       return {
         ...state,
         chunks_parentSlot: slotJump(
-          "FORWARD",
           state.chunks,
           state.chunks[state.chunks.length - 1]
         )
@@ -176,6 +104,27 @@ const equationReducer = (state = defaultState, action) => {
   }
 };
 
+function slotJump(chunks, chunk) {
+  if (!chunk.parentId) {
+    if (chunk.childrenSlotCount) {
+      return 1; // We are trying to nest in this one
+    }
+    return undefined; //We are top level so no slots to jump to.
+  }
+
+  let parentChunk = chunks.filter(chunk => chunk.id === chunk.parentId)[0];
+  if (!parentChunk) return undefined; //Catch for an odd case
+
+  // Get last chunk slot and parent avail slots (cast to int)
+  let currentChunkSlot = +chunk.parentSlot;
+  let availableParentChunkSlots = +parentChunk.childrenSlotCount;
+  if (availableParentChunkSlots - currentChunkSlot > 0)
+    return currentChunkSlot + 1;
+
+  return slotJump(chunks, parentChunk); // LOOOOOOP
+}
+
+/*
 function slotJump(type = "FORWARD", chunks, chunk) {
   if (!chunk.parentId) return undefined; //We are top level so no slots to jump to (???)
 
@@ -202,6 +151,6 @@ function slotJump(type = "FORWARD", chunks, chunk) {
 
   // LOOOOOOP
   return slotJump(type, chunks, parentChunk);
-}
+}*/
 
 export default equationReducer;
