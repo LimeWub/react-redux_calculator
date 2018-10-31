@@ -7,11 +7,16 @@ class KeyPercent extends React.PureComponent {
   constructor(props) {
     super(props);
     this.percentAppend = this.percentAppend.bind(this);
+    this.key = React.createRef();
   }
 
   render() {
     return (
-      <Key onClick={this.percentAppend()} classModifiers="key--percent">
+      <Key
+        onClick={this.percentAppend}
+        classModifiers="key--percent"
+        ref={this.key}
+      >
         %
       </Key>
     );
@@ -34,5 +39,7 @@ const mapDispatchToProps = dispatch => {
 
 export default connect(
   null,
-  mapDispatchToProps
+  mapDispatchToProps,
+  null,
+  { withRef: true }
 )(KeyPercent);

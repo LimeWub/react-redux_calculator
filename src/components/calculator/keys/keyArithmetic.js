@@ -7,6 +7,7 @@ class KeyArithmetic extends React.PureComponent {
   constructor(props) {
     super(props);
     this.arithmeticAppend = this.arithmeticAppend.bind(this);
+    this.key = React.createRef();
   }
 
   render() {
@@ -28,7 +29,11 @@ class KeyArithmetic extends React.PureComponent {
         throw new Error("Unsupported arithmetic operator");
     }
     return (
-      <Key onClick={this.arithmeticAppend()} value={this.props.value}>
+      <Key
+        onClick={this.arithmeticAppend}
+        value={this.props.value}
+        ref={this.key}
+      >
         {printedValue}
       </Key>
     );
@@ -51,5 +56,7 @@ const mapDispatchToProps = dispatch => {
 
 export default connect(
   null,
-  mapDispatchToProps
+  mapDispatchToProps,
+  null,
+  { withRef: true }
 )(KeyArithmetic);

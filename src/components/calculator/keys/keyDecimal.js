@@ -7,10 +7,15 @@ class KeyDecimal extends React.PureComponent {
   constructor(props) {
     super(props);
     this.decimalAppend = this.decimalAppend.bind(this);
+    this.key = React.createRef();
   }
 
   render() {
-    return <Key onClick={this.decimalAppend()}>{this.props.value}</Key>;
+    return (
+      <Key onClick={this.decimalAppend} ref={this.key}>
+        .
+      </Key>
+    );
   }
 
   decimalAppend() {
@@ -30,5 +35,7 @@ const mapDispatchToProps = dispatch => {
 
 export default connect(
   null,
-  mapDispatchToProps
+  mapDispatchToProps,
+  null,
+  { withRef: true }
 )(KeyDecimal);

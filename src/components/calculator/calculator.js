@@ -45,22 +45,24 @@ class Calculator extends React.Component {
   }
 
   handleKeyDown(e) {
+    const getKeyButton = id => {
+      const keyWrapper = this.keyboard.current.keys[id].current;
+      if (typeof keyWrapper.getWrappedInstance === "function") {
+        return keyWrapper.getWrappedInstance().key.current;
+      }
+      return keyWrapper.key.current;
+    };
     // I am thinking. Button presses as refs (?)
-    const keyboard = this.keyboard.current.getWrappedInstance();
     switch (e.key) {
       case "Backspace":
-        if (
-          e.altKey ||
-          e.metaKey ||
-          (keyboard.props.chunks.length <= 1 && keyboard.props.hasValidResult)
-        ) {
-          keyboard.ac();
+        if (e.altKey || e.metaKey) {
+          getKeyButton(`keyAC`).triggerClick();
           break;
         }
-        keyboard.ce();
+        getKeyButton(`keyCE`).triggerClick();
         break;
       case "Delete":
-        keyboard.ac();
+        getKeyButton(`keyAC`).triggerClick();
         break;
       case "=":
         this.handleSubmit(e);
@@ -82,6 +84,7 @@ class Calculator extends React.Component {
           this.props.switchOff();
         }
         break;
+      //Tabbing through Power/Roots?
       //Todo: Show scientific calc button ? (Alt/Meta + ->)?
       //Everything allowed in the calculator:
       case "0":
@@ -94,36 +97,56 @@ class Calculator extends React.Component {
       case "7":
       case "8":
       case "9":
+        getKeyButton(`key${e.key}`).triggerClick();
+        break;
       case ".":
+        getKeyButton(`keyDecimal`).triggerClick();
+        break;
       case "+":
+        getKeyButton(`keyPlus`).triggerClick();
+        break;
       case "-":
+        getKeyButton(`keyMinus`).triggerClick();
+        break;
       case "/":
+        getKeyButton(`keyDivide`).triggerClick();
+        break;
       case "*":
+        getKeyButton(`keyMultiply`).triggerClick();
+        break;
       case "%":
-        keyboard.justAppend(e.key);
+        getKeyButton(`keyPercent`).triggerClick();
         break;
       case "(":
-        keyboard.in;
+        getKeyButton(`keyParenthesisOpen`).triggerClick();
+        break;
       case ")":
-        keyboard.justAppend(e.key);
+        getKeyButton(`keyParenthesisClose`).triggerClick();
         break;
       case "s":
       case "S":
-        keyboard.justAppend("Math.sin(");
+        getKeyButton(`keySin`).triggerClick();
         break;
       case "c":
       case "C":
-        keyboard.justAppend("Math.cos(");
+        getKeyButton(`keyCos`).triggerClick();
         break;
       case "t":
       case "T":
-        keyboard.justAppend("Math.tan(");
+        getKeyButton(`keyTan`).triggerClick();
         break;
       case "π":
       case "Π":
-        keyboard.justAppend("Math.PI");
+        getKeyButton(`keyPi`).triggerClick();
         break;
-      //Todo: √, ** (pow)
+      case "r":
+      case "R":
+        getKeyButton(`keyRoot`).triggerClick();
+        break;
+      case "p":
+      case "P":
+        getKeyButton(`keyPower`).triggerClick();
+        break;
       default:
         return false; // unhandled
     }
@@ -132,8 +155,9 @@ class Calculator extends React.Component {
   }
 
   handleSubmit(e) {
-    const keyboard = this.keyboard.current.getWrappedInstance();
-    keyboard.triggerEvaluation();
+    console.log("handling submit");
+    const keyboard = this.keyboard.current;
+    //  keyboard.triggerEvaluation(); //don't exist atm
     e.preventDefault();
   }
 }

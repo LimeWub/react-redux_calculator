@@ -49,7 +49,7 @@ export const evaluate = (equation, unitsInDegrees) => {
 export const ac = () => {
   return dispatch => {
     dispatch({
-      type: types.equation.AC
+      type: types.equation.ALL_CLEAR
     });
   };
 };
@@ -57,7 +57,7 @@ export const ac = () => {
 export const ce = () => {
   return dispatch => {
     dispatch({
-      type: types.equation.CE
+      type: types.equation.POP_CHUNK
     });
   };
 };
@@ -75,6 +75,30 @@ export const degreesSwitch = () => {
   return dispatch => {
     dispatch({
       type: types.equation.DEGREES_SWITCH
+    });
+  };
+};
+
+export const nestChunks = () => {
+  return dispatch => {
+    dispatch({
+      type: types.equation.NEST_CHUNKS
+    });
+  };
+};
+
+export const hoistChunks = () => {
+  return dispatch => {
+    dispatch({
+      type: types.equation.HOIST_CHUNKS
+    });
+  };
+};
+
+export const slotChunks = () => {
+  return dispatch => {
+    dispatch({
+      type: types.equation.SLOT_CHUNKS
     });
   };
 };

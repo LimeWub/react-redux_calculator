@@ -5,32 +5,38 @@ import { prettify, prettify_light } from "utils/equationUtils";
 // redux.js.org/api/store#subscribe
 
 class Equation extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      readable: "0",
+      display: "0",
+      executable: "0"
+    };
+  }
   render() {
     return (
-      <div
-        className="screen numeric
-                    theme theme--5
-                    texture texture--grid texture--over"
-      >
-        <span className="screen__display numeric">
-          {prettify(this.props.equation)}
+      <React.Fragment>
+        <span className="equation equation--display numeric">
+          {/* prettify(this.props.equation) */}
         </span>
         <input
-          className="screen__equation"
+          className="equation equation--readable"
           type="text"
           aria-live="polite"
-          value={prettify_light(this.props.equation)}
+          value={"hey" /* prettify_light(this.props.equation) */}
           placeholder="0"
           readOnly="true"
         />
-      </div>
+        // executable? // processChunks and set executable version into state //
+        WIll this be ok or will it cause a re-render loop?
+      </React.Fragment>
     );
   }
 }
 
 const mapStateToProps = state => {
   return {
-    equation: state.equation.chunks.join("")
+    chunks: state.equation.chunks
   };
 };
 

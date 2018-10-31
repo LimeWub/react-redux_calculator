@@ -7,11 +7,14 @@ class KeyNumeric extends React.PureComponent {
   constructor(props) {
     super(props);
     this.numericAppend = this.numericAppend.bind(this);
+
+    this.test = "Test Successful";
+    this.key = React.createRef();
   }
 
   render() {
     return (
-      <Key onClick={this.numericAppend()} value={this.props.value}>
+      <Key onClick={this.numericAppend} value={this.props.value} ref={this.key}>
         {this.props.value}
       </Key>
     );
@@ -34,5 +37,7 @@ const mapDispatchToProps = dispatch => {
 
 export default connect(
   null,
-  mapDispatchToProps
+  mapDispatchToProps,
+  null,
+  { withRef: true }
 )(KeyNumeric);

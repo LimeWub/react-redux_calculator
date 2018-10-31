@@ -7,11 +7,12 @@ class KeyPi extends React.PureComponent {
   constructor(props) {
     super(props);
     this.piAppend = this.piAppend.bind(this);
+    this.key = React.createRef();
   }
 
   render() {
     return (
-      <Key onClick={this.piAppend()} classModifiers="key--pi">
+      <Key onClick={this.piAppend} classModifiers="key--pi" ref={this.key}>
         π
       </Key>
     );
@@ -34,5 +35,7 @@ const mapDispatchToProps = dispatch => {
 
 export default connect(
   null,
-  mapDispatchToProps
+  mapDispatchToProps,
+  null,
+  { withRef: true }
 )(KeyPi);

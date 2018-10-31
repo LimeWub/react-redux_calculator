@@ -7,23 +7,35 @@ import {
 } from "actions/equation.actions";
 
 class KeyDelete extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.key = React.createRef();
+  }
   render() {
-    return (
-      <React.Fragment>
-        <Key
-          onClick={this.props.clearEquation()}
-          classModifiers={!this.props.chunkCount && "key--invisible"}
-        >
-          CE
-        </Key>
-        <Key
-          onClick={this.props.allClearEquation()}
-          classModifiers={this.props.chunkCount && "key--invisible"}
-        >
-          AC
-        </Key>
-      </React.Fragment>
-    );
+    switch (this.props.value) {
+      case "CE":
+        return (
+          <Key
+            onClick={this.props.clearEquation}
+            classModifiers={!this.props.chunkCount && "key--invisible"}
+            ref={this.key}
+          >
+            CE
+          </Key>
+        );
+      case "AC":
+        return (
+          <Key
+            onClick={this.props.allClearEquation}
+            classModifiers={this.props.chunkCount && "key--invisible"}
+            ref={this.key}
+          >
+            AC
+          </Key>
+        );
+      default:
+        throw new Error("Unsupported delete method");
+    }
   }
 }
 
@@ -46,5 +58,7 @@ const mapDispatchToProps = dispatch => {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
+  null,
+  { withRef: true }
 )(KeyDelete);

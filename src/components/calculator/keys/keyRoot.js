@@ -1,17 +1,22 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Key } from "components/calculator/keys/key";
-import { appendTo as appendToEquation } from "actions/equation.actions";
+import {
+  appendTo as appendToEquation,
+  nestChunks as deepenNestLevelOfEquation,
+  slotChunks as updateEditedSlotInEquation
+} from "actions/equation.actions";
 
 class KeyRoot extends React.PureComponent {
   constructor(props) {
     super(props);
     this.rootAppend = this.rootAppend.bind(this);
+    this.key = React.createRef();
   }
 
   render() {
     return (
-      <Key onClick={this.rootAppend()} classModifiers="key--root">
+      <Key onClick={this.rootAppend} classModifiers="key--root" ref={this.key}>
         <span>x√y</span>
       </Key>
     );
@@ -22,11 +27,6 @@ class KeyRoot extends React.PureComponent {
       value: "ROOT",
       childrenSlotCount: 2
     });
-    // TODO
-    // types.equation.NEST_CHUNKS:
-    // update chunk parent id
-    // update chunk parent slot
-    // types.equation.SLOT_CHUNKS:
   }
 }
 
@@ -34,11 +34,15 @@ const mapDispatchToProps = dispatch => {
   return {
     appendToEquation: chunk => {
       dispatch(appendToEquation(chunk));
+      dispatch(deepenNestLevelOfEquation());
+      dispatch(updateEditedSlotInEquation());
     }
   };
 };
 
 export default connect(
   null,
-  mapDispatchToProps
+  mapDispatchToProps,
+  null,
+  { withRef: true }
 )(KeyRoot);
