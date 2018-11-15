@@ -1,36 +1,24 @@
 import React from "react";
-import { connect } from "react-redux";
 
-class Chunk extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  renderType = {
-    ASSISTIVE: 0,
-    VISUAL: 1,
-    RAW: 2
-  };
-
+import "styles/components/equation/chunk";
+class Chunk extends React.PureComponent {
   render() {
-    switch (this.props.renderType) {
-      case this.renderType.ASSISTIVE:
-        break;
-      case this.renderType.VISUAL:
-        break;
-      case this.renderType.RAW:
-        break;
+    switch (this.props.renderas) {
+      case "display":
+        return (
+          <span
+            className={`chunk
+            ${this.props.classModifiers || ""}`
+              .replace(/\s+/g, " ") //Useless yet OCD
+              .trim()}
+          >
+            {this.props.children}
+          </span>
+        );
+      case "executable":
+        return this.props.children;
       default:
-        return <span style={{ color: "red" }}>Error: Invalid renderType</span>;
-    }
-    if (this.props.renderVersion === "Simple") {
-      return <React.Fragment>{this.props.render}</React.Fragment>;
-    } else {
-      return (
-        <React.Fragment>
-          <span style={{ color: "red" }}>{this.props.render}</span>
-        </React.Fragment>
-      );
+        throw new Error("Unsupported render method");
     }
   }
 }

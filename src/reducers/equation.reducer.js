@@ -1,13 +1,14 @@
 import types from "actions/types";
 
 const defaultState = {
-  history: "",
   result: "",
   error: "",
   chunks: [],
+  history_chunks: [],
   chunks_parentId: undefined,
   chunks_parentSlot: undefined,
   unitsInDegrees: false,
+  history_unitsInDegrees: false,
   executable: ""
 };
 
@@ -24,14 +25,15 @@ const equationReducer = (state = defaultState, action) => {
     case types.equation.ALL_CLEAR:
       return {
         ...state,
-        history: defaultState.history,
+        history_chunks: defaultState.history_chunks,
+        history_unitsInDegrees: defaultState.history_unitsInDegrees,
         chunks: defaultState.chunks,
         chunks_parentId: defaultState.chunks_parentId,
         chunks_parentSlot: defaultState.chunks_parentSlot,
         executable: defaultState.executable
       };
     case types.equation.APPEND_CHUNK:
-      console.log(state.chunks);
+      //      console.log(state.chunks);
       return {
         ...state,
         chunks: [
@@ -93,7 +95,8 @@ const equationReducer = (state = defaultState, action) => {
     case types.equation.RESULT:
       return {
         ...state,
-        history: state.executable,
+        history_chunks: state.chunks,
+        history_unitsInDegrees: state.unitsInDegrees,
         result: action.payload.result,
         error: defaultState.error,
         chunks: [
@@ -108,7 +111,8 @@ const equationReducer = (state = defaultState, action) => {
     case types.equation.ERROR:
       return {
         ...state,
-        history: defaultState.history,
+        history_chunks: defaultState.history_chunks,
+        history_unitsInDegrees: defaultState.history_unitsInDegrees,
         result: defaultState.result,
         error: action.payload.error
       };
@@ -124,7 +128,7 @@ const equationReducer = (state = defaultState, action) => {
 
 function slotJump(state) {
   // I do believe this one is -again- not doing what I thought it did
-  if (!state.chunks_parentId) return state; //There is no parent to slot in
+  if (state.chunks_parentId === defaultState.parentId) return state; //There is no parent to slot in
 
   // If there is currently no slot but there is a parent
   // with slots; then this is the first time we're here.

@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { prettify } from "utils/equationUtils";
+import Equation from "components/equation/equation";
 
 import "styles/components/calculator/history.scss";
 class History extends React.Component {
@@ -8,6 +8,16 @@ class History extends React.Component {
     let historyText;
     if (this.props.error) {
       historyText = `Error: ${this.props.error}`;
+    } else if (this.props.chunks.length) {
+      historyText = (
+        <React.Fragment>
+          <Equation
+            chunks={this.props.chunks}
+            unitsInDegreesunitsInDegrees={this.props.unitsInDegrees}
+          />
+          =
+        </React.Fragment>
+      );
     } else if (this.props.result) {
       historyText = `Ans: ${this.props.result}`;
     } else {
@@ -19,8 +29,10 @@ class History extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    result: state.equation.result,
-    error: state.equation.error
+    error: state.equation.error,
+    chunks: state.equation.history_chunks,
+    unitsInDegrees: `${state.equation.history_unitsInDegrees}`,
+    result: state.equation.result
   };
 };
 

@@ -1,31 +1,36 @@
 import types from "actions/types";
-import {
-  autocomplete,
-  cleanForEval,
-  degreesToRadians,
-  translateForEval
-} from "utils/equationUtils";
+import _unescape from "lodash.unescape";
 
-export const evaluate = (equation, unitsInDegrees) => {
+export const evaluate = equation => {
   return dispatch => {
     let result;
-    let equationToEval, history;
-    equationToEval = history = autocomplete(equation);
-    if (unitsInDegrees) {
-      equationToEval = degreesToRadians(equationToEval);
-    }
-
+    console.log(
+      _unescape(equation).replace(/[\d]+/g, function(n) {
+        return parseFloat(n);
+      })
+    );
     try {
-      //octal literals are not allowed in strict mode when 0 in front of number .-.
       result =
+        // Round result to Decimal of 2 digits past point max
         Math.round(
-          parseFloat(eval(translateForEval(cleanForEval(equationToEval))), 10) *
-            100
+          parseFloat(
+            // Eval!
+            eval(
+              // Fix for: Octal literals are not allowed in
+              // strict mode; happens when 0 in front of number
+              _unescape(equation).replace(/[\d]+/g, function(n) {
+                return parseFloat(n);
+              })
+            ),
+            10
+          ) * 100
         ) / 100;
     } catch (err) {
       dispatch({
         type: types.equation.ERROR,
-        error: `:( Error: ${err}`
+        payload: {
+          error: `:( ${err}`
+        }
       });
       return false;
     }
@@ -33,15 +38,18 @@ export const evaluate = (equation, unitsInDegrees) => {
     if (isNaN(result)) {
       dispatch({
         type: types.equation.ERROR,
-        error: `:( Error: Something broke! Try again.`
+        payload: {
+          error: `:( Error: Something broke! Try again.`
+        }
       });
       return false;
     }
 
     dispatch({
       type: types.equation.RESULT,
-      history: history,
-      result: result
+      payload: {
+        result: result
+      }
     });
   };
 };
@@ -99,6 +107,17 @@ export const slotChunks = () => {
   return dispatch => {
     dispatch({
       type: types.equation.SLOT_CHUNKS
+    });
+  };
+};
+
+export const updateExecutable = executable => {
+  return dispatch => {
+    dispatch({
+      type: types.equation.UPDATE_EXECUTABLE,
+      payload: {
+        executable: executable
+      }
     });
   };
 };

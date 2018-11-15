@@ -32,7 +32,8 @@ export class Key extends React.PureComponent {
   }
 
   handleClick() {
-    this.props.onClick();
+    if (this.props.onClick && typeof this.props.onClick === "function")
+      this.props.onClick();
     // Button press animation
     this.setState({
       isActive: true

@@ -91,46 +91,4 @@ export default class Keyboard extends React.PureComponent {
       </div>
     );
   }
-  /*
-  processThenAppend(value) {
-    switch (value) {
-      case "pow":
-        // Reverse the chunks cause we're looking from the ending
-        let reverseChunks = [...this.props.chunks].reverse();
-
-        // While the chunk doesn't match the regex (numerics, % or .)
-        // Add to the index count (starting from 0)
-        let regEx = /[0-9]|%|\.|,/g;
-        let i = 0;
-        while (regEx.test(reverseChunks[i])) {
-          i++;
-        }
-        if (i === 0) break;
-
-        // Once found
-        // Chunk length - index count
-        // Insert at index
-        this.props.insertToEquationAtIndex(
-          "Math.pow(",
-          this.props.chunks.length - i
-        );
-        this.props.appendToEquation(","); // Append comma
-        this.props.addPower();
-
-        //Mark that we are in a nest somehow and
-        // expected list of characters to free
-        // (! 0-9, ., %, pow)
-
-        break;
-      case "rt":
-        value = "Math.pow(";
-
-        break;
-      default:
-        value = "";
-        break;
-    }
-    return;
-  }
-*/
 }
