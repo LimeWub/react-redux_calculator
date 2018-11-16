@@ -33,7 +33,6 @@ const equationReducer = (state = defaultState, action) => {
         executable: defaultState.executable
       };
     case types.equation.APPEND_CHUNK:
-      //      console.log(state.chunks);
       return {
         ...state,
         chunks: [
@@ -48,21 +47,9 @@ const equationReducer = (state = defaultState, action) => {
         ]
       };
     case types.equation.POP_CHUNK:
-      let chunk = state.chunks.pop(); // hmmmm Is this useful? Can I has backcatching powers?
-      for (let i = 0; i < state.chunks.length; i++) {
-        if (state.chunks[i].parentId === chunk.id)
-          state.chunks[i].parentId = chunk.parentId;
-      }
       return {
         ...state,
-        error: defaultState.error,
-        chunks: [...state.chunks],
-        chunks_parentId: state.chunks.length
-          ? state.chunks[state.chunks.length - 1].parentId
-          : defaultState.chunks_parentId,
-        chunks_parentSlot: state.chunks.length
-          ? state.chunks[state.chunks.length - 1].parentSlot
-          : defaultState.chunks_parentSlot
+        ...popChunk(state) // (= 3 =)
       };
     case types.equation.DEGREES_SWITCH:
       return {
@@ -88,9 +75,20 @@ const equationReducer = (state = defaultState, action) => {
           : defaultState.chunks_parentSlot
       };
     case types.equation.SLOT_CHUNKS:
+      if (action.payload.parentSlot !== -1) {
+        //Allow for payload (FORCE)
+        return {
+          ...state,
+          chunks_parentId:
+            action.payload.parentId !== -1
+              ? action.payload.parentId
+              : state.chunks_parentId,
+          chunks_parentSlot: action.payload.parentSlot
+        };
+      }
       return {
         ...state,
-        ...slotJump(state) // (= ^ =)
+        ...slotChunks(state) // (= ^ =)
       };
     case types.equation.RESULT:
       return {
@@ -126,7 +124,7 @@ const equationReducer = (state = defaultState, action) => {
   }
 };
 
-function slotJump(state) {
+function slotChunks(state) {
   // I do believe this one is -again- not doing what I thought it did
   if (state.chunks_parentId === defaultState.parentId) return state; //There is no parent to slot in
 
@@ -151,7 +149,69 @@ function slotJump(state) {
   //  state.chunks_parentId = parentChunk.parentId;
   state.chunks_parentSlot = defaultState.chunks_parentSlot;
 
-  return slotJump(state); // LOOOOOOP
+  return slotChunks(state); // LOOOOOOP
+}
+
+function popChunk(state) {
+  let chunks = state.chunks;
+  function getIndexOfChunkToPop(
+    parentId = state.chunks_parentId,
+    parentSlot = state.chunks_parentSlot
+  ) {
+    let chunk;
+    let i;
+    // Get the last chunk that matches currently edited slot
+    for (i = chunks.length - 1; i >= 0; i--) {
+      if (
+        chunks[i].parentId === parentId &&
+        chunks[i].parentSlot === parentSlot
+      ) {
+        chunk = chunks[i];
+        break;
+      }
+    }
+    // There was no chunk that matched both parent and slot?
+    if (chunk === undefined) {
+      // Try matching just parent
+      for (i = chunks.length - 1; i >= 0; i--) {
+        if (chunks[i].parentId === parentId) {
+          chunk = chunks[i];
+          break;
+        }
+      }
+      // Nothing matched parent either! Just get last chunk avail.
+      if (chunk === undefined) return chunks.length - 1;
+    }
+    // false? Nothing to change -match couldn't be found
+    // For each of the children slots (backwards)
+    // For the children of this chunk which match slot and id  (if any)
+    // Get the last/deepest nested chunk that matches slot
+    for (let s = chunk.childrenSlotCount; s >= 1; s--) {
+      i = getIndexOfChunkToPop(chunk.id, s);
+      if (i) break;
+    }
+    return i;
+  }
+
+  const indexOfChunkToPop = getIndexOfChunkToPop();
+  const poppedChunk = state.chunks.splice(indexOfChunkToPop, 1)[0];
+  const stateChanges = {
+    chunks: [...state.chunks],
+    chunks_parentId: state.chunks.length
+      ? poppedChunk.parentId
+      : defaultState.chunks_parentId,
+    chunks_parentSlot: state.chunks.length
+      ? poppedChunk.parentSlot
+      : defaultState.chunks_parentSlot,
+    //Reset History
+    history_chunks: state.chunks.length
+      ? state.history_chunks
+      : defaultState.history_chunks,
+    history_unitsInDegrees: state.chunks.length
+      ? state.history_unitsInDegrees
+      : defaultState.history_unitsInDegrees
+  };
+  return stateChanges;
 }
 
 export default equationReducer;

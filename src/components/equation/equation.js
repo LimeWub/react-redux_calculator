@@ -11,13 +11,13 @@ import ChunkPi from "components/equation/chunks/chunkPi";
 import ChunkPower from "components/equation/chunks/chunkPower";
 import ChunkRoot from "components/equation/chunks/chunkRoot";
 import ChunkScientific from "components/equation/chunks/chunkScientific";
-import { updateExecutable } from "actions/equation.actions";
+import { updateExecutable, slotChunks } from "actions/equation.actions";
 
-class Equation extends React.Component {
+class Equation extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.renderChunks = this.renderChunks.bind(this);
     this.live = props.live;
+    this.renderChunks = this.renderChunks.bind(this);
     this.renderredChunks = {
       display: [],
       executable: ""
@@ -91,21 +91,31 @@ class Equation extends React.Component {
           case "SIN":
           case "COS":
           case "TAN":
-            props.unitsInDegrees = this.props.unitsInDegrees || "false";
             Component = ChunkScientific;
+            props.unitsInDegrees = this.props.unitsInDegrees || "false";
+            props.slotChunks = this.props.slotChunks;
+            props.id = chunk.id;
             break;
           case "PI":
             Component = ChunkPi;
             break;
           case "POW":
             Component = ChunkPower;
+            props.slotChunks = this.props.slotChunks;
+            props.id = chunk.id;
             break;
           case "ROOT":
             Component = ChunkRoot;
+            props.slotChunks = this.props.slotChunks;
+            props.id = chunk.id;
             break;
           default:
             Component = Chunk;
             props.children = chunk.value;
+        }
+        // Live: Can only happen for chunks with children
+        if (this.props.liveChunk === chunk.id) {
+          props.liveSlot = this.props.liveSlot;
         }
 
         // Render for display and execution
@@ -140,6 +150,9 @@ const mapDispatchToProps = dispatch => {
   return {
     updateExecutable: executable => {
       dispatch(updateExecutable(executable));
+    },
+    slotChunks: (parentId, parentSlot) => {
+      dispatch(slotChunks(parentId, parentSlot));
     }
   };
 };

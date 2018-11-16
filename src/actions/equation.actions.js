@@ -4,20 +4,18 @@ import _unescape from "lodash.unescape";
 export const evaluate = equation => {
   return dispatch => {
     let result;
-    console.log(
-      _unescape(equation).replace(/[\d]+/g, function(n) {
-        return parseFloat(n);
-      })
-    );
     try {
       result =
-        // Round result to Decimal of 2 digits past point max
+        // Round result to Decimal of max 2 digits past point
         Math.round(
           parseFloat(
             // Eval!
             eval(
-              // Fix for: Octal literals are not allowed in
-              // strict mode; happens when 0 in front of number
+              // Replace fix for: Octal literals are not allowed in
+              // strict mode; happens when 0 in front of 0-7 number
+              // Unescape for: Reverting React's
+              // I-m-protecting-u-from-bad-code-being-printed
+              // html escaping
               _unescape(equation).replace(/[\d]+/g, function(n) {
                 return parseFloat(n);
               })
@@ -103,10 +101,14 @@ export const hoistChunks = () => {
   };
 };
 
-export const slotChunks = () => {
+export const slotChunks = (parentId = -1, parentSlot = -1) => {
   return dispatch => {
     dispatch({
-      type: types.equation.SLOT_CHUNKS
+      type: types.equation.SLOT_CHUNKS,
+      payload: {
+        parentId,
+        parentSlot
+      }
     });
   };
 };

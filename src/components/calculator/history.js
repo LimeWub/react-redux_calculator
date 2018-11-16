@@ -13,7 +13,7 @@ class History extends React.Component {
         <React.Fragment>
           <Equation
             chunks={this.props.chunks}
-            unitsInDegreesunitsInDegrees={this.props.unitsInDegrees}
+            unitsInDegrees={this.props.unitsInDegrees}
           />
           =
         </React.Fragment>
